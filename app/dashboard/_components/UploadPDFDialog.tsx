@@ -14,12 +14,17 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import React, { useState } from "react";
 import { LoaderIcon } from "lucide-react";
-
+import uuid4 from "uuid4";
+import { useUser } from "@clerk/nextjs";
+import { AddFileEntryToDb } from "@/convex/dfStorage";
 function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<any>();
+  const getFileUrl = useMutation(api.dfStorage.getFileUrl)
   const generateUploadUrl = useMutation(api.dfStorage.generateUploadUrl);
-
+  const InsertFileEntry = useMutation(api.dfStorage.AddFileEntryToDb);
+  const { user } = useUser();
+  const [fileName, setFileName] = useState("");
   const onFileSelect = (e: any) => {
     setFile(e);
   };
@@ -48,9 +53,18 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
         );
       }
       console.log(file.type, " here");
-      // Step 3: Parse the storageId from the response
+      // Step 3: Parse the storageId from the respon se
       const { storageId } = await result.json();
-      console.log("Storage ID:", storageId);
+
+      const fileId = uuid4();
+      const fileUrl = await getFileUrl({storageId:storageId})
+      const response = await InsertFileEntry({
+        fileId: fileId,
+        storageId: storageId,
+        fileName: fileName ?? 'Untitle filed',
+        fileUrl:fileUrl ?? "",
+        createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      });
 
       setLoading(false);
     } catch (error) {
@@ -82,17 +96,23 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
                 <label htmlFor="Filename">
                   File Name <span>*</span>
                 </label>
-                <input type="text" name="" id="" />
+                <input
+                  onChange={(e) => setFileName(e.target.value)}
+                  type="text"
+                  name=""
+                  id=""
+                />
               </div>
             </div>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <div className="w-full bg-slate-100 text-balck flex justify-center my-2 rounded-md border border-slate-300">Close</div>
+            <div className="w-full bg-slate-100 text-balck flex justify-center my-2 rounded-md border border-slate-300">
+              Close
+            </div>
           </DialogClose>
           <Button>
-           
             <div onClick={OnUpload}>
               {loading ? (
                 <LoaderIcon className="animate-spin" />
