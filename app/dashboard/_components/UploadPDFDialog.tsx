@@ -33,7 +33,7 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
     if (!file) return; // Exit early if no file is selected
 
     setLoading(true);
-
+    console.log(file.type)
     try {
       // Step 1: Generate the upload URL from Convex
       const postUrl = await generateUploadUrl();
@@ -41,9 +41,9 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       // Step 2: Prepare the file content and make the request
       const result = await fetch(postUrl, {
         method: "POST",
-        // headers: {
-        //   "Content-Type":  "", // Use file.type to get the correct MIME type
-        // },
+       headers: {
+        "Content-Type":  file.type, // Use file.type to get the correct MIME type
+         },
         body: file, // Send the file directly in the body
       });
 
@@ -65,6 +65,8 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
         fileUrl:fileUrl ?? "",
         createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
       });
+
+      console.log(response)
 
       setLoading(false);
     } catch (error) {
