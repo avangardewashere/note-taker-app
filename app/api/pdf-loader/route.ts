@@ -1,6 +1,6 @@
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { NextRequest, NextResponse } from "next/server";
-
+import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
 const pdfUrl =
   "https://wooden-ant-266.convex.cloud/api/storage/e9bf bd5c-7ca8-404b-b5ac-736772f3a8d7";
 const pdfUrl2 =
@@ -20,6 +20,19 @@ export async function GET(req: NextRequest) {
     pdfTextContent=pdfTextContent+doc.pageContent
   })
 
+  //2.sokut the text into smaller chunks
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize:100,
+    chunkOverlap:20,
+  })
+ 
+  const output = await splitter.createDocuments([pdfTextContent])
 
-  return NextResponse.json({ result: pdfTextContent });
+  let splitterList:Array<String> = [];
+  output.forEach(doc=>{
+    splitterList.push(doc.pageContent);
+  })
+
+
+  return NextResponse.json({ result: splitterList });
 }
