@@ -87,7 +87,7 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       console.log();
       await  embedDocument({
         splitText: apiResp.data.result,
-        fileId: "123",
+        fileId: fileId,
       });
 
       setLoading(false);
