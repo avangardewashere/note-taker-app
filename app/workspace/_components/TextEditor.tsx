@@ -23,7 +23,7 @@ const TextEditor = () => {
   });
   return (
     <div>
-      <EditorExtension editor={editor} />
+      <EditorExtension editor={editor ??  null} />
       <div className="p-4">
         <EditorContent editor={editor}></EditorContent>
       </div>
