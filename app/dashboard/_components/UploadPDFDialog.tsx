@@ -82,7 +82,7 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       const apiResp = await axios.get('/api/pdf-loader')
       console.log(apiResp.data.result);
    
-      embedDocument({})
+      const embbededResult = embedDocument({splitText:apiResp.data.result,fileId:"123"})
 
       setLoading(false);
     } catch (error) {
