@@ -1,3 +1,4 @@
+ 
 import React from "react";
 
 interface IPdfViewer {
@@ -8,10 +9,10 @@ interface IPdfViewer {
 const PdfViewer = (props: IPdfViewer) => {
   const { fileId, fileUrl } = props;
   return (
-    <div>
-      {/* <span>spdf viewer for {fileId ?? "file Id not found"}</span> */}
-      <iframe src={fileUrl} className="h-[90vh]" width={"100%"}  />
-    </div>
+    
+   
+      <iframe src={fileUrl + "#toolbar=0"}  className="h-[90vh] w-[100%]"   />
+ 
   );
 };
 

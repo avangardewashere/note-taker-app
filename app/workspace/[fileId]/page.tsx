@@ -22,7 +22,7 @@ export default function Workspace() {
   return (
     <div>
       <WorkspaceHeader />
-      <div>
+      <div className="grid grid-cols-2 gap-5">
         <div>{/* text editor */}</div>
         <div>
           <PdfViewer fileId={fileId} fileUrl={fileInfo ? fileInfo?.fileUrl :"" } />
