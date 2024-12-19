@@ -25,7 +25,7 @@ export default function Workspace() {
       <div>
         <div>{/* text editor */}</div>
         <div>
-          <PdfViewer fileId={fileId} />
+          <PdfViewer fileId={fileId} fileUrl={fileInfo ? fileInfo?.fileUrl :"" } />
         </div>
       </div>
     </div>

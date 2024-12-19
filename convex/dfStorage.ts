@@ -48,7 +48,7 @@ export const GetFileRecord = query({
       .collect();
 
     console.log(result)
-  return result;
+  return result[0];
   },
 
 });
