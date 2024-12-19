@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import { Editor } from "@tiptap/core";
 import { chatSession } from "@/configs/AIModel";
+import { toast } from "sonner";
 interface IEditorExtension{
     editor:Editor | null,
     
@@ -28,7 +29,7 @@ const EditorExtension = ({editor, }:IEditorExtension) => {
 
 
     const onAiClick = async () =>{
-      
+      toast("AI is working...")
       const selectedText=editor.state.doc.textBetween(
         editor?.state.selection.from,
         editor?.state.selection.to,

@@ -24,7 +24,7 @@ const TextEditor = () => {
   return (
     <div>
       <EditorExtension editor={editor ??  null} />
-      <div className="p-4">
+      <div className="p-4 overflow-auto h-[88vh] ">
         <EditorContent editor={editor}></EditorContent>
       </div>
     </div>
