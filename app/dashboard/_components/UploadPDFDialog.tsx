@@ -17,18 +17,20 @@ import { LoaderIcon } from "lucide-react";
 import uuid4 from "uuid4";
 import { useUser } from "@clerk/nextjs";
 import { AddFileEntryToDb } from "@/convex/dfStorage";
-import axios from "axios"
+import axios from "axios";
 
 function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const getFileUrl = useMutation(api.dfStorage.getFileUrl);
   const generateUploadUrl = useMutation(api.dfStorage.generateUploadUrl);
   const InsertFileEntry = useMutation(api.dfStorage.AddFileEntryToDb);
-  const embedDocument = useAction(api.myAction.ingest)
-  
+  const embedDocument = useAction(api.myAction.ingest);
+
   const { user } = useUser();
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<any>();
+  const [open,setOpen] = useState(false)
+
   const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
       alert("No file selected.");
@@ -43,48 +45,53 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const OnUpload = async () => {
     if (!file) return; // Exit early if no file is selected
 
-    // setLoading(true);
+    setLoading(true);
     // console.log(file.type);
     try {
-      // // Step 1: Generate the upload URL from Convex
-      // const postUrl = await generateUploadUrl();
+      // Step 1: Generate the upload URL from Convex
+      const postUrl = await generateUploadUrl();
 
-      // // Step 2: Prepare the file content and make the request
-      // const result = await fetch(postUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": file.type, // Use file.type to get the correct MIME type
-      //   },
-      //   body: file, // Send the file directly in the body
-      // });
+      // Step 2: Prepare the file content and make the request
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type, // Use file.type to get the correct MIME type
+        },
+        body: file, // Send the file directly in the body
+      });
 
-      // if (!result.ok) {
-      //   throw new Error(
-      //     `Failed to upload file. Server responded with ${result.status}`
-      //   );
-      // }
-      // console.log(file.type, " here");
-      // // Step 3: Parse the storageId from the respon se
-      // const { storageId } = await result.json();
+      if (!result.ok) {
+        throw new Error(
+          `Failed to upload file. Server responded with ${result.status}`
+        );
+      }
+      console.log(file.type, " here");
+      // Step 3: Parse the storageId from the respon se
+      const { storageId } = await result.json();
 
-      // const fileId = uuid4();
-      // const fileUrl = await getFileUrl({ storageId: storageId });
-      // const response = await InsertFileEntry({
-      //   fileId: fileId,
-      //   storageId: storageId,
-      //   fileName: fileName ?? "Untitle filed",
-      //   fileUrl: fileUrl ?? "",
-      //   createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
-      // });
+      const fileId = uuid4();
+      const fileUrl = await getFileUrl({ storageId: storageId });
+      const response = await InsertFileEntry({
+        fileId: fileId,
+        storageId: storageId,
+        fileName: fileName ?? "Untitle filed",
+        fileUrl: fileUrl ?? "",
+        createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      });
 
-      // console.log(response);
+      console.log(response);
 
-      const apiResp = await axios.get('/api/pdf-loader')
+      const apiResp = await axios.get("/api/pdf-loader?pdfUrl=" + fileUrl);
       console.log(apiResp.data.result);
-   
-      const embbededResult = embedDocument({splitText:apiResp.data.result,fileId:"123"})
+
+      console.log();
+      await  embedDocument({
+        splitText: apiResp.data.result,
+        fileId: "123",
+      });
 
       setLoading(false);
+      setOpen(false)
     } catch (error) {
       console.error("Upload error:", error);
       setLoading(false);
@@ -92,8 +99,10 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger className="w-full h=20">{children}</DialogTrigger>
+    <Dialog open={open}>
+      <DialogTrigger className="w-full h=20">
+        <Button className="w-full" onClick={()=>{setOpen(!open)}}>+ Upload PDF File</Button>
+      </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
@@ -130,12 +139,12 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
               Close
             </div>
           </DialogClose>
-          <Button>
+          <Button disabled={loading}>
             <div onClick={OnUpload}>
               {loading ? (
                 <LoaderIcon className="animate-spin" />
               ) : (
-                <Button>Upload</Button>
+                <div>Upload</div>
               )}
             </div>
           </Button>
