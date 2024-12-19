@@ -10,21 +10,25 @@ import {
   DialogClose,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import React, { useState } from "react";
 import { LoaderIcon } from "lucide-react";
 import uuid4 from "uuid4";
 import { useUser } from "@clerk/nextjs";
 import { AddFileEntryToDb } from "@/convex/dfStorage";
+import axios from "axios"
+
 function UploadPDFDialog({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<any>();
   const getFileUrl = useMutation(api.dfStorage.getFileUrl);
   const generateUploadUrl = useMutation(api.dfStorage.generateUploadUrl);
   const InsertFileEntry = useMutation(api.dfStorage.AddFileEntryToDb);
+  const embedDocument = useAction(api.myAction.ingest)
+  
   const { user } = useUser();
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<any>();
   const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
       alert("No file selected.");
@@ -39,41 +43,46 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const OnUpload = async () => {
     if (!file) return; // Exit early if no file is selected
 
-    setLoading(true);
-    console.log(file.type);
+    // setLoading(true);
+    // console.log(file.type);
     try {
-      // Step 1: Generate the upload URL from Convex
-      const postUrl = await generateUploadUrl();
+      // // Step 1: Generate the upload URL from Convex
+      // const postUrl = await generateUploadUrl();
 
-      // Step 2: Prepare the file content and make the request
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": file.type, // Use file.type to get the correct MIME type
-        },
-        body: file, // Send the file directly in the body
-      });
+      // // Step 2: Prepare the file content and make the request
+      // const result = await fetch(postUrl, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": file.type, // Use file.type to get the correct MIME type
+      //   },
+      //   body: file, // Send the file directly in the body
+      // });
 
-      if (!result.ok) {
-        throw new Error(
-          `Failed to upload file. Server responded with ${result.status}`
-        );
-      }
-      console.log(file.type, " here");
-      // Step 3: Parse the storageId from the respon se
-      const { storageId } = await result.json();
+      // if (!result.ok) {
+      //   throw new Error(
+      //     `Failed to upload file. Server responded with ${result.status}`
+      //   );
+      // }
+      // console.log(file.type, " here");
+      // // Step 3: Parse the storageId from the respon se
+      // const { storageId } = await result.json();
 
-      const fileId = uuid4();
-      const fileUrl = await getFileUrl({ storageId: storageId });
-      const response = await InsertFileEntry({
-        fileId: fileId,
-        storageId: storageId,
-        fileName: fileName ?? "Untitle filed",
-        fileUrl: fileUrl ?? "",
-        createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
-      });
+      // const fileId = uuid4();
+      // const fileUrl = await getFileUrl({ storageId: storageId });
+      // const response = await InsertFileEntry({
+      //   fileId: fileId,
+      //   storageId: storageId,
+      //   fileName: fileName ?? "Untitle filed",
+      //   fileUrl: fileUrl ?? "",
+      //   createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      // });
 
-      console.log(response);
+      // console.log(response);
+
+      const apiResp = await axios.get('/api/pdf-loader')
+      console.log(apiResp.data.result);
+   
+      embedDocument({})
 
       setLoading(false);
     } catch (error) {
