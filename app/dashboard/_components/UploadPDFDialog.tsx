@@ -20,20 +20,27 @@ import { AddFileEntryToDb } from "@/convex/dfStorage";
 function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<any>();
-  const getFileUrl = useMutation(api.dfStorage.getFileUrl)
+  const getFileUrl = useMutation(api.dfStorage.getFileUrl);
   const generateUploadUrl = useMutation(api.dfStorage.generateUploadUrl);
   const InsertFileEntry = useMutation(api.dfStorage.AddFileEntryToDb);
   const { user } = useUser();
   const [fileName, setFileName] = useState("");
-  const onFileSelect = (e: any) => {
-    setFile(e);
+  const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      alert("No file selected.");
+      return;
+    }
+
+    // Set the first selected file
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
   };
 
   const OnUpload = async () => {
     if (!file) return; // Exit early if no file is selected
 
     setLoading(true);
-    console.log(file.type)
+    console.log(file.type);
     try {
       // Step 1: Generate the upload URL from Convex
       const postUrl = await generateUploadUrl();
@@ -41,9 +48,9 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       // Step 2: Prepare the file content and make the request
       const result = await fetch(postUrl, {
         method: "POST",
-       headers: {
-        "Content-Type":  file.type, // Use file.type to get the correct MIME type
-         },
+        headers: {
+          "Content-Type": file.type, // Use file.type to get the correct MIME type
+        },
         body: file, // Send the file directly in the body
       });
 
@@ -57,16 +64,16 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       const { storageId } = await result.json();
 
       const fileId = uuid4();
-      const fileUrl = await getFileUrl({storageId:storageId})
+      const fileUrl = await getFileUrl({ storageId: storageId });
       const response = await InsertFileEntry({
         fileId: fileId,
         storageId: storageId,
-        fileName: fileName ?? 'Untitle filed',
-        fileUrl:fileUrl ?? "",
+        fileName: fileName ?? "Untitle filed",
+        fileUrl: fileUrl ?? "",
         createdBy: user?.primaryEmailAddress?.emailAddress ?? "Unknown",
       });
 
-      console.log(response)
+      console.log(response);
 
       setLoading(false);
     } catch (error) {

@@ -4,7 +4,7 @@ import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
 const pdfUrl =
   "https://wooden-ant-266.convex.cloud/api/storage/e9bf bd5c-7ca8-404b-b5ac-736772f3a8d7";
 const pdfUrl2 =
-  "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  "https://wooden-ant-266.convex.cloud/api/storage/09442af2-ec93-497e-95aa-2b71b2f12c78";
 export async function GET(req: NextRequest) {
   //1, laod the pdfFile
   const resp = await fetch(pdfUrl2);
