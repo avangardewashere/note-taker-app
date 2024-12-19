@@ -1,10 +1,18 @@
 import React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder"
 const TextEditor = () => {
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: "<p>Meow World!</p>",
+    extensions: [StarterKit,Placeholder.configure({
+        placeholder:"Start Taking your notes Here"
+    })],
+    // content: "<p>Meow World!</p>",
+    editorProps:{
+        attributes:{
+            class:'focus:outline-none h-[90vh]'  
+        }
+    }
   });
   return (
     <div>
