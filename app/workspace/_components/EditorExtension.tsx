@@ -1,12 +1,13 @@
 "use client"
 import { api } from "@/convex/_generated/api";
-import { useAction } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { Italic, Sparkles } from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { Editor } from "@tiptap/core";
 import { chatSession } from "@/configs/AIModel";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 interface IEditorExtension{
     editor:Editor | null,
     
@@ -25,8 +26,8 @@ const EditorExtension = ({editor, }:IEditorExtension) => {
     //initialize the action
     const searchAi = useAction(api.myAction.search);
     const { fileId } = useParams();
-    
-
+    const saveNotes = useMutation(api.notes.AddNotes)
+    const {user} = useUser();
 
     const onAiClick = async () =>{
       toast("AI is working...")
@@ -58,6 +59,14 @@ const EditorExtension = ({editor, }:IEditorExtension) => {
       const FinalAnswer = AIModelResult.response.text().replace("```","").replace('html','').replace("```","");
       const AllText =editor.getHTML()
       editor.commands.setContent(AllText+'<p><strong>Answer: </strong> '+FinalAnswer +' </p>')
+
+      saveNotes({
+        notes:editor.getHTML(),
+        fileId:fileId?.toString() ?? '',
+        createdBy:user?.primaryEmailAddress?.emailAddress
+
+      })
+
     }
 
   return (
