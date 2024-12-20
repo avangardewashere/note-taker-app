@@ -57,8 +57,14 @@ export const GetFileRecord = query({
 
 export const GetUserFiles=query({
   args:{
-    userEmail:v.string(),
+    userEmail:v.optional(v.string()),
   },handler:async(ctx,args)=>{
+
+    if(!args?.userEmail){
+      return ;
+    }
+
+
     const result = await ctx.db.query('pdfFiles').filter(q=>q.eq(q.field('createdBy'),args.userEmail)).collect();
 
     // return JSON.stringify(result)

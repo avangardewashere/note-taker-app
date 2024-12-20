@@ -18,6 +18,7 @@ import uuid4 from "uuid4";
 import { useUser } from "@clerk/nextjs";
 import { AddFileEntryToDb } from "@/convex/dfStorage";
 import axios from "axios";
+import { toast } from "sonner";
 
 function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const getFileUrl = useMutation(api.dfStorage.getFileUrl);
@@ -29,7 +30,7 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<any>();
-  const [open,setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -85,13 +86,15 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
       console.log(apiResp.data.result);
 
       console.log();
-      await  embedDocument({
+      await embedDocument({
         splitText: apiResp.data.result,
         fileId: fileId,
       });
-
+      toast("File is ready", {
+        style: { background: "green", color: "white" },
+      });
       setLoading(false);
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
       console.error("Upload error:", error);
       setLoading(false);
@@ -101,7 +104,14 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
   return (
     <Dialog open={open}>
       <DialogTrigger className="w-full h=20">
-        <Button className="w-full" onClick={()=>{setOpen(!open)}}>+ Upload PDF File</Button>
+        <Button
+          className="w-full"
+          onClick={() => {
+            setOpen(!open);
+          }}
+        >
+          + Upload PDF File
+        </Button>
       </DialogTrigger>
 
       <DialogContent>
