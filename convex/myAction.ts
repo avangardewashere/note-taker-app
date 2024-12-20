@@ -19,7 +19,7 @@ export const ingest = action({
         args.splitText, // Array of text chunks
         metadataArray, // Array of metadata objects
         new GoogleGenerativeAIEmbeddings({
-          apiKey: "AIzaSyDmE-uX7BywWaZ5rNpuig3XNhKA6qr9Egc",
+          apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
           model: "text-embedding-004", // 768 dimensions
           taskType: TaskType.RETRIEVAL_DOCUMENT,
           title: "Document title",

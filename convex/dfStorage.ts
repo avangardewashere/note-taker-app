@@ -62,7 +62,7 @@ export const GetUserFiles=query({
 
     if(!args?.userEmail){
       return ;
-    }
+    } 
 
 
     const result = await ctx.db.query('pdfFiles').filter(q=>q.eq(q.field('createdBy'),args.userEmail)).collect();

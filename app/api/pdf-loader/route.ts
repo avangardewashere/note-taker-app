@@ -7,7 +7,7 @@ const pdfUrl2 =
   "https://wooden-ant-266.convex.cloud/api/storage/09442af2-ec93-497e-95aa-2b71b2f12c78";
 
 
-export async function GET(req: NextRequest) {
+ export async function GET(req: NextRequest) {
   const reqUrl = req.url;
   const { searchParams } = new URL(reqUrl);
   const pdfUrl = searchParams.get("pdfUrl");

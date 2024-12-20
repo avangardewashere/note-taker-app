@@ -63,7 +63,7 @@ const EditorExtension = ({editor, }:IEditorExtension) => {
       saveNotes({
         notes:editor.getHTML(),
         fileId:fileId?.toString() ?? '',
-        createdBy:user?.primaryEmailAddress?.emailAddress
+        createdBy:user?.primaryEmailAddress?.emailAddress ?? ""
 
       })
 
