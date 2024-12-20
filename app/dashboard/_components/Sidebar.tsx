@@ -19,7 +19,7 @@ function Sidebar() {
       <div className="imageLogo"></div>
 
       <div className="mt-10">
-        <UploadPDFDialog>
+        <UploadPDFDialog  isMaxFile={fileList?.length && fileList?.length>=5 ? true:false}>
           <div className="w-full bg-[#00aa98] h-full rounded-md text-white p-2 hover:bg-[#00aa68] ">
             Upload PDF
           </div>

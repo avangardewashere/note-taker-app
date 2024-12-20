@@ -20,7 +20,13 @@ import { AddFileEntryToDb } from "@/convex/dfStorage";
 import axios from "axios";
 import { toast } from "sonner";
 
-function UploadPDFDialog({ children }: { children: React.ReactNode }) {
+function UploadPDFDialog({
+  children,
+  isMaxFile,
+}: {
+  children: React.ReactNode;
+  isMaxFile: boolean;
+}) {
   const getFileUrl = useMutation(api.dfStorage.getFileUrl);
   const generateUploadUrl = useMutation(api.dfStorage.generateUploadUrl);
   const InsertFileEntry = useMutation(api.dfStorage.AddFileEntryToDb);
@@ -103,15 +109,15 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
 
   return (
     <Dialog open={open}>
-      <DialogTrigger className="w-full h=20">
-        <Button
-          className="w-full"
+      <DialogTrigger disabled={isMaxFile}  className="w-full h=20">
+        <div
+          className={`${isMaxFile? "opacity-50" :""} flex gap-2 items-center p-3 mt-5 w-full bg-[#00aa99] justify-center text-white hover:bg-[#00aa68] rounded-lg cursor-pointer `}
           onClick={() => {
             setOpen(!open);
           }}
         >
           + Upload PDF File
-        </Button>
+        </div>
       </DialogTrigger>
 
       <DialogContent>
@@ -120,7 +126,7 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
           <DialogDescription asChild>
             <div>
               <h2 className="mt-5">Select a file to Upload</h2>
-              <div className="  gap-2 rounded-md border">
+              <div className="mt-4  gap-2 rounded-md border">
                 <input
                   type="file"
                   accept="application/pdf"
@@ -131,9 +137,10 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
               </div>
               <div className="mt-2">
                 <label htmlFor="Filename">
-                  File Name <span>*</span>
+                  File Name <span className="text-2xl text-rose-700">*</span>
                 </label>
                 <input
+                  className="border border-slate-200 ml-4 rounded-md h-8 p-2 focus:outline-none"
                   onChange={(e) => setFileName(e.target.value)}
                   type="text"
                   name=""
@@ -143,9 +150,9 @@ function UploadPDFDialog({ children }: { children: React.ReactNode }) {
             </div>
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-end">
-          <DialogClose asChild>
-            <div className="w-full bg-slate-100 text-balck flex justify-center my-2 rounded-md border border-slate-300">
+        <DialogFooter className="sm:justify-end flex items-center">
+          <DialogClose onClick={() => setOpen(false)} asChild>
+            <div className="w-fit p-[6px] px-3 bg-slate-100 text-balck flex justify-center my-2 rounded-md border border-slate-300">
               Close
             </div>
           </DialogClose>
