@@ -25,7 +25,7 @@ export default function Workspace() {
       <WorkspaceHeader fileName={fileInfo?.fileName ?? ""} />
       <div className="grid grid-cols-2 gap-5">
         <div>{/* text editor */}
-            <TextEditor/>
+            <TextEditor fileId={fileId?.toString() ?? ""}/>
         </div>
         <div>
           <PdfViewer fileId={fileId} fileUrl={fileInfo ? fileInfo?.fileUrl :"" } />

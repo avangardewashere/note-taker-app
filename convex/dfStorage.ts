@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { stringify } from "querystring";
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
@@ -52,3 +53,15 @@ export const GetFileRecord = query({
   },
 
 });
+
+
+export const GetUserFiles=query({
+  args:{
+    userEmail:v.string(),
+  },handler:async(ctx,args)=>{
+    const result = await ctx.db.query('pdfFiles').filter(q=>q.eq(q.field('createdBy'),args.userEmail)).collect();
+
+    // return JSON.stringify(result)
+    return result
+  }
+})
