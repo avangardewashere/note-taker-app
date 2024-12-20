@@ -23,7 +23,7 @@ function Dashboad() {
         {fileList && fileList?.length > 0
           ? fileList?.map((file, index) => {
               return (
-                <Link href={"/workspace/" + file.fileId}>
+                <Link key={index} href={"/workspace/" + file.fileId}>
                   <div className="m-2 flex flex-col p-5 shadow-md rounded-md items-center justify-center border cursor-pointer hover:scale-110  transition-all">
                     <Image
                       src={"/pdf.png"}
@@ -41,7 +41,7 @@ function Dashboad() {
             })
           : [1, 2, 3, 4].map((item, index) => {
               return (
-                <div className="bg-slate-200 rounded-md h-[150px] animate-pulse"></div>
+                <div key={index} className="bg-slate-200 rounded-md h-[150px] animate-pulse"></div>
               );
             })}
       </div>
